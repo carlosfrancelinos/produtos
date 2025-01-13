@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1")
 public class ProdutoController {
@@ -27,18 +28,12 @@ public class ProdutoController {
     }
 
     @GetMapping("produto/{id}")
-    public ResponseEntity<String> consultaProdutoPorId(@PathVariable(value = "id") String produtoId) throws ResourceNotFoundException {
+    public ResponseEntity<Produto> consultaProdutoPorId(@PathVariable(value = "id") String produtoId) throws ResourceNotFoundException {
         Produto produto = produtoService.findByID(produtoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto com id não existente: " + produtoId));
 
-        if(Objects.nonNull(produto)) {
-            String produtoConsultado = produtoService.geraJson(produto);
-
-            return Objects.nonNull(produtoConsultado)
-                    ? ResponseEntity.status(HttpStatus.FOUND).body(produtoConsultado) : ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.notFound().build();
+            return Objects.nonNull(produto)
+                    ? ResponseEntity.status(HttpStatus.OK).body(produto) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("produto")
